@@ -51,8 +51,8 @@ def send_message(bot, message):
 
 def get_api_answer(current_timestamp):
     """
-    Делает запрос к API и возвращает ответ,
-    преобразовав его из формата JSON к типам данных Python.
+    Делает запрос к API.
+    Возвращает ответ, преобразовав его из формата JSON к типам данных Python.
     """
     timestamp = current_timestamp or int(time.time())
     params = {'from_date': timestamp}
