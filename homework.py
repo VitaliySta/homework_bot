@@ -41,7 +41,7 @@ HOMEWORK_STATUSES = {
 
 
 def send_message(bot, message):
-    """Отправляет сообщение в Telegram чат"""
+    """Отправляет сообщение в Telegram чат."""
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logger.info('Сообщение в чат {TELEGRAM_CHAT_ID}: {message}')
@@ -52,7 +52,7 @@ def send_message(bot, message):
 def get_api_answer(current_timestamp):
     """
     Делает запрос к API и возвращает ответ,
-    преобразовав его из формата JSON к типам данных Python
+    преобразовав его из формата JSON к типам данных Python.
     """
     timestamp = current_timestamp or int(time.time())
     params = {'from_date': timestamp}
@@ -69,17 +69,17 @@ def get_api_answer(current_timestamp):
 
 
 def check_response(response):
-    """Получаем список домашних работ"""
+    """Получаем список домашних работ."""
     response = response['homeworks']
     if response is None:
-        raise Exception(f'Ошибка словарь homeworks пустой')
+        raise Exception('Ошибка словарь homeworks пустой')
     if isinstance(response, dict):
-        raise Exception(f'Ошибка homeworks не словарь')
+        raise Exception('Ошибка homeworks не словарь')
     return response[0]
 
 
 def parse_status(homework):
-    """Возвращает статус конкретной домашней работы"""
+    """Возвращает статус конкретной домашней работы."""
     if 'homework_name' not in homework:
         raise KeyError('homework_name отсутствует в homework')
     if 'status' not in homework:
@@ -93,7 +93,7 @@ def parse_status(homework):
 
 
 def check_tokens():
-    """Проверяет доступность переменных окружения"""
+    """Проверяет доступность переменных окружения."""
     if all([PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID]):
         return True
     else:
@@ -107,7 +107,7 @@ def main():
     current_timestamp = int(time.time())
     STATUS = ''
     ERROR = ''
-    if check_tokens() == False:
+    if check_tokens() is False:
         raise Exception('Отсутствует обязательная переменная окружения')
     while True:
         try:
