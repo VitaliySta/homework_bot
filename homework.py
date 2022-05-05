@@ -47,7 +47,7 @@ def send_message(bot, message):
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logging.info(f'Сообщение в чат {TELEGRAM_CHAT_ID}: {message}')
     except telegram.TelegramError:
-        logging.error(f'Ошибка отправки сообщения', exc_info=True)
+        logging.error('Ошибка отправки сообщения', exc_info=True)
 
 
 def get_api_answer(current_timestamp):
@@ -131,7 +131,7 @@ def main():
             time.sleep(RETRY_TIME)
 
         except telegram.TelegramError:
-            logging.error(f'Ошибка отправки сообщения')
+            logging.error('Ошибка отправки сообщения')
             time.sleep(RETRY_TIME)
 
         except StatusCode as error:
