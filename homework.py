@@ -134,14 +134,6 @@ def main():
             logging.error('Ошибка отправки сообщения')
             time.sleep(RETRY_TIME)
 
-        except StatusCode as error:
-            logging.error(f'Ошибка: статус кода страницы не 200: {error}')
-            message = f'Сбой в статусе кода страницы: {error}'
-            if message != error_bot:
-                send_message(bot, message)
-                error_bot = message
-            time.sleep(RETRY_TIME)
-
         except APIRequestError as error:
             logging.error(f'Ошибка при запросе к основному API: {error}')
             message = f'Сбой при запросе к основному API: {error}'
