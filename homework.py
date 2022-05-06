@@ -34,7 +34,7 @@ RETRY_TIME = 600
 ENDPOINT = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
 HEADERS = {'Authorization': f'OAuth {PRACTICUM_TOKEN}'}
 
-VERDICT = {
+VERDICTS = {
     'approved': 'Работа проверена: ревьюеру всё понравилось. Ура!',
     'reviewing': 'Работа взята на проверку ревьюером.',
     'rejected': 'Работа проверена: у ревьюера есть замечания.'
@@ -75,7 +75,7 @@ def get_api_answer(current_timestamp):
 
 def check_response(response):
     """Получаем список домашних работ."""
-    if type(response) is not dict:
+    if not isinstance(response, dict):
         raise TypeError(f'{response} отличен от словаря')
     if response is None:
         raise Exception('Ошибка словарь homeworks пустой')
@@ -87,9 +87,9 @@ def parse_status(homework):
     if 'homework_name' not in homework:
         raise KeyError('homework_name отсутствует в homework')
     homework_status = homework['status']
-    if homework_status not in VERDICT:
+    if homework_status not in VERDICTS:
         raise Exception('Неизвестный статус домашей работы')
-    verdict = VERDICT[homework_status]
+    verdict = VERDICTS[homework_status]
     return f'Изменился статус проверки работы "{homework["homework_name"]}".' \
            f'{verdict}'
 
@@ -101,15 +101,12 @@ def check_tokens():
         'TELEGRAM_TOKEN': TELEGRAM_TOKEN,
         'TELEGRAM_CHAT_ID': TELEGRAM_CHAT_ID,
     }
-    if all(variables) and None not in variables.values():
-        return True
-    else:
-        for variable in variables:
-            if variables[variable] is False or variables[variable] is None:
-                logging.critical(
-                    f'Отсутствует {variable} переменная окружения'
-                )
+    empty_vars = [name for name, value in variables.items() if not value]
+    if empty_vars:
+        logging.critical(f'Отсутствует {empty_vars} переменная окружения')
         return False
+    else:
+        return True
 
 
 def main():
@@ -128,11 +125,9 @@ def main():
             if message != status:
                 send_message(bot, message)
                 status = message
-            time.sleep(RETRY_TIME)
 
         except telegram.TelegramError:
             logging.error('Ошибка отправки сообщения')
-            time.sleep(RETRY_TIME)
 
         except APIRequestError as error:
             logging.error(f'Ошибка при запросе к основному API: {error}')
@@ -140,14 +135,17 @@ def main():
             if message != error_bot:
                 send_message(bot, message)
                 error_bot = message
-            time.sleep(RETRY_TIME)
 
         except Exception as error:
-            logging.error(f'Ошибка при отправке сообщения: {error}')
+            logging.error(
+                f'Ошибка при отправке сообщения: {error}', exc_info=True
+            )
             message = f'Сбой в работе программы: {error}'
             if message != error_bot:
                 send_message(bot, message)
                 error_bot = message
+
+        finally:
             time.sleep(RETRY_TIME)
 
 
